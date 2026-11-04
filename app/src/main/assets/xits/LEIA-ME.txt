@@ -1,0 +1,6 @@
+Coloque aqui os arquivos do xit, mantendo as subpastas.
+Se existir um binario chamado "inject", ele roda automaticamente depois
+que o Free Fire abre, para colocar a .so dentro do jogo (sem root).
+Antes de sobrescrever qualquer arquivo do jogo o app faz backup e restaura
+ao remover a injecao ou no BYPASS.
+Destinos: Android/data/com.dts.freefireth/files/ , .../files/DRAKO/ , Documents/DRAKO/
