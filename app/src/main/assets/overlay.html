@@ -1,0 +1,48 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:transparent;font-family:system-ui,Roboto,sans-serif;overflow:hidden}
+.fl{width:210px;background:rgba(12,4,6,.93);border:1px solid #ef4444;border-radius:12px;overflow:hidden;color:#f6ebec}
+.h{display:flex;align-items:center;justify-content:space-between;padding:7px 9px;background:#7f1d1d;touch-action:none}
+.h b{font-size:10px;letter-spacing:1.2px;color:#fff}.h i{font-size:11px;color:#fff;font-style:normal;padding:0 4px}
+.b{padding:5px 9px 8px}
+.r{display:flex;align-items:center;justify-content:space-between;font-size:10px;color:#e6d3d4;padding:4px 0}
+.sw{width:28px;height:15px;border-radius:9px;background:#3a2a2c;position:relative;transition:.2s;flex:0 0 auto}
+.sw::after{content:'';position:absolute;top:2px;left:2px;width:11px;height:11px;border-radius:50%;background:#fff;transition:.2s}
+.r.on .sw{background:#dc2626}.r.on .sw::after{left:15px}
+.fv{border-top:1px dashed rgba(239,68,68,.3);margin-top:4px;padding-top:5px}
+.fv div{display:flex;justify-content:space-between;font-size:9.5px;color:#fca5a5;margin-bottom:2px}
+input[type=range]{width:100%;accent-color:#ef4444;height:16px}
+.m{font-size:8.5px;color:#8ee6a8;font-family:monospace;border-top:1px dashed rgba(239,68,68,.3);margin-top:5px;padding-top:4px;height:14px;overflow:hidden}
+</style></head><body>
+<div class="fl">
+<div class="h" id="h"><b>FLUTUANTE DRAKO</b><i id="x">✕</i></div>
+<div class="b">
+<div id="lista"></div>
+<div class="fv"><div><span>REGULAR FOV</span><b id="fv">90</b></div><input type="range" min="50" max="360" value="90" id="fov"></div>
+<div class="m" id="m">pronto</div>
+</div></div>
+<script>
+const N=window.DrakoNative;
+const OPT=[['hsCabeca','HS CABEÇA'],['espLinha','ESP LINHA'],['espBox','ESP BOX'],['espVida','ESP VIDA'],['aimbot','AIMBOT AO ATIRA'],['exibirFov','EXIBIR FOV']];
+const S={opts:{},fov:90};
+function build(){const L=document.getElementById('lista');L.innerHTML='';
+OPT.forEach(([k,l])=>{const r=document.createElement('div');r.className='r';r.dataset.k=k;
+r.innerHTML='<span>'+l+'</span><i class="sw"></i>';
+r.onclick=()=>{S.opts[k]=!S.opts[k];N.setOpt(k,S.opts[k]);document.getElementById('m').textContent=k+'='+S.opts[k];sync();};
+L.appendChild(r);});}
+function sync(){document.querySelectorAll('.r').forEach(r=>r.classList.toggle('on',!!S.opts[r.dataset.k]));
+document.getElementById('fov').value=S.fov;document.getElementById('fv').textContent=S.fov;}
+window.DRAKO={onEstado(j){const o=JSON.parse(j);
+OPT.forEach(([k])=>{if(o[k]!==undefined)S.opts[k]=o[k];});if(o.fov)S.fov=o.fov;sync();}};
+document.getElementById('fov').oninput=e=>{S.fov=+e.target.value;sync();N.setFov(S.fov);};
+document.getElementById('x').onclick=()=>N.fecharPainel();
+let lx=0,ly=0,drag=false;const h=document.getElementById('h');
+h.addEventListener('touchstart',e=>{drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:true});
+h.addEventListener('touchmove',e=>{if(!drag)return;const t=e.touches[0];N.mover(t.clientX-lx,t.clientY-ly);lx=t.clientX;ly=t.clientY;},{passive:true});
+h.addEventListener('touchend',()=>drag=false);
+h.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;});
+window.addEventListener('mousemove',e=>{if(!drag)return;N.mover(e.clientX-lx,e.clientY-ly);lx=e.clientX;ly=e.clientY;});
+window.addEventListener('mouseup',()=>drag=false);
+build();N.pedirEstado();
+</script></body></html>
